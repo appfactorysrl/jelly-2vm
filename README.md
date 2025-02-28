@@ -185,7 +185,7 @@ Sometimes having a state of the whole page can lead to performance issues, for t
 
 Let's take as an example a simple counter:
 
-** View **
+#### View:
 
 ```dart
 class CounterView extends ViewWidget<CounterViewModel> {
@@ -220,7 +220,7 @@ class CounterView extends ViewWidget<CounterViewModel> {
 }
 ```
 
-** ViewModel **
+#### ViewModel:
 
 ```dart
 class CounterViewModel extends ViewModel {
