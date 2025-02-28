@@ -6,7 +6,7 @@
 
 **jelly-2vm** is a lightweight microframework for Flutter, based on the Model-View-ViewModel (MVVM) pattern, designed to enhance the **maintainability**, **simplicity**, and **scalability** of your applications. Born from AppFactory's experience with apps serving millions of users in Italy, jelly-2vm provides a clear and reactive structure for Flutter app development.
 
-**Read more about the philosophy and implementation of jelly-2vm in our article on Medium: [Building Scalable Flutter Apps with jelly-2vm: A Lightweight MVVM Architecture](https://medium.com/@luca.roverelli/95be868b18b9)**
+**Read more about the philosophy and implementation of jelly-2vm in our article on Medium: [jelly-2vm: A Lean MVVM Architecture for Scalable Flutter Applications](https://medium.com/@luca.roverelli/jelly-2vm-a-lean-mvvm-architecture-for-scalable-flutter-applications-95be868b18b9)**
 
 ## Key Features
 
