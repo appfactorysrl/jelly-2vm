@@ -52,6 +52,7 @@ class _ViewWidgetState<T extends ViewModel> extends State<ViewWidget<T>>
   @override
   void didUpdateWidget(ViewWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // ignore: unnecessary_null_comparison
     if (mounted && context == null) {
       widget._contextContainer.context = context;
       widget._contextContainer.vsync = this;

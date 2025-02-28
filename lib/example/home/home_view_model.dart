@@ -51,7 +51,7 @@ class PersistentStorageInterface<T>
 
   @override
   Future<void> save(T value) async {
-    final encodedValue = encoder(value);
+    //final encodedValue = encoder(value);
 
     // Here you save the value to the persistent storage
     throw UnimplementedError();
