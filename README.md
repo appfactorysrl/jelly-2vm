@@ -1,78 +1,63 @@
-# jelly-2vm
+# jelly-2vm: A Lightweight MVVM Microframework for Flutter
 
-## Why
+[![GitHub Stars](https://img.shields.io/github/stars/appfactorysrl/jelly-2vm?style=social)](https://github.com/appfactorysrl/jelly-2vm/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/appfactorysrl/jelly-2vm)](https://github.com/appfactorysrl/jelly-2vm/issues)
+[![GitHub License](https://img.shields.io/github/license/appfactorysrl/jelly-2vm)](https://github.com/appfactorysrl/jelly-2vm/blob/main/LICENSE)
 
-Simple library that helps you implementing `view<->viewModel<->[service]` paradigm in Flutter, main advantages of this paradigm are:
+**jelly-2vm** is a lightweight microframework for Flutter, based on the Model-View-ViewModel (MVVM) pattern, designed to enhance the **maintainability**, **simplicity**, and **scalability** of your applications. Born from AppFactory's experience with apps serving millions of users in Italy, jelly-2vm provides a clear and reactive structure for Flutter app development.
 
-- UI and business logic completely separated
-- Being able to test functionality without UI
+**Read more about the philosophy and implementation of jelly-2vm in our article on Medium: [Building Scalable Flutter Apps with jelly-2vm: A Lightweight MVVM Architecture](https://medium.com/@luca.roverelli/95be868b18b9)**
 
-## Get started
+## Key Features
 
-Let's build a basic counter!
+* **Clear MVVM Architecture**: Clean separation between View, ViewModel, and Service for more organized code.
+* **Optimized Reactivity**: Targeted UI updates with `ChangeBuilder`, avoiding unnecessary rebuilds.
+* **Service Management**: Services as singletons managed with `GetIt` for easy dependency injection.
+* **Reactive Services**: `ServiceNotifier` for reactive communication between services.
+* **Simplicity**: Minimal API with only three main classes: `ViewModel`, `ViewWidget`, and `ChangeBuilder`.
+* **Testability**: Easy mocking and testing thanks to dependency injection.
+* **Scalability**: Designed for large-scale applications and extended teams.
 
-### Step 0
+## Installation
 
-Create starter project and clean `main.dart`
+Add `jelly-2vm` to your `pubspec.yaml` dependencies:
 
-```dart
-// main.dart
-void main() async {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '2VM Counter',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: CounterView(),
-    );
-  }
-}
+```yaml
+dependencies:
+  jelly_2vm: ^latest_version
 ```
 
-### Step 1
+Run `flutter pub get` to install the package.
 
-Create a Counter `Model` that extends `ViewModel`
+## Usage
 
-Here we will put all the business logic for the Counter
+### Example: Counter App
+
+#### ViewModel:
 
 ```dart
-// pages/counter/counter-view-model.dart
 class CounterViewModel extends ViewModel {
-  // Instanciate the model with an initial value when you call it
   CounterViewModel(this.count);
   int count;
 
   void increment(int amount) {
     count += amount;
-    notifyListeners(); //We'll use this later to make the view reactive
+    notifyListeners();
   }
 
   void decrement(int amount) {
     count -= amount;
-    notifyListeners(); //We'll use this later to make the view reactive
+    notifyListeners();
   }
 }
 ```
 
-### Step 2
-
-Create a Counter `View` that extends `ViewWidget` or `ImmutableViewWidget` (if you don't need the context or vsync and want to make the view const)
-
-Here we will put the UI for the Counter
+#### View:
 
 ```dart
-// pages/counter/counter-view.dart
 class CounterView extends ViewWidget<CounterViewModel> {
-  Counter({Key? key}) : super(key: key);
+  CounterView({Key? key}) : super(key: key);
 
-  // Instantiate the Model with 0 as initial value and pass it to View
   @override
   CounterViewModel createViewModel() {
     return CounterViewModel(0);
@@ -82,124 +67,115 @@ class CounterView extends ViewWidget<CounterViewModel> {
   Widget builder(BuildContext context, CounterViewModel counterViewModel) {
     return Scaffold(
       body: SafeArea(
-          child: Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          MaterialButton(
-            onPressed: () => counterViewModel.increment(1), // Call method of CounterViewModel
-            child: const Text("Increment"),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              MaterialButton(
+                onPressed: () => counterViewModel.increment(1),
+                child: const Text("Increment"),
+              ),
+              ChangeBuilder<CounterViewModel>(
+                listen: counterViewModel,
+                builder: (context, state) => Text("${state.count}"),
+              ),
+              MaterialButton(
+                onPressed: () => counterViewModel.decrement(1),
+                child: const Text("Decrement"),
+              ),
+            ],
           ),
-          ChangeBuilder<CounterViewModel>( // You need to pass the class of your [ViewModel]
-            // Reactive part of the view, you can move ChangeBuilder to make even the whole view rerender when notifyListener()
-            listen: counterViewModel, //Listen for notifyListener() of counterViewModel
-            builder: (context, state) => Text("${state.count}")),
-          MaterialButton(
-            onPressed: () => counterViewModel.decrement(1), // Call method of CounterViewModel
-            child: const Text("Decrement"),
-          ),
-        ]),
-      )),
+        ),
+      ),
     );
   }
 }
 ```
 
-### Step 3
+### Services
 
-Enjoy your reactive view!
+Please refer to the Medium article for more details on the services and how to use them.
 
-You can now add API service calls in your ViewModel
-
-If you want to share data between views make yourself a `StateManager`: just create a Singleton that extends ChangeNotifier, then save shared data in there and trigger `notifyListener()` when it changes. Then pass this to `ChangeBuilder` in different views, et voilà, reactive view from shared data.
-
-Example:
+#### StorageService (Example):
 
 ```dart
-// providers/counter-provider.dart
-class CounterStateManager extends ChangeNotifier {
-  // Make CounterStateManager a singleton
-  static final CounterStateManager _singleton = CounterStateManager._internal();
-  factory CounterStateManager() {
-    return _singleton;
+class StorageService {
+  StorageService();
+
+  Future<void> save(String key, String value) async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setString(key, value);
   }
-  CounterStateManager._internal();
 
-  // Define state and logic
-  int _count = 0;
+  // ... other methods ...
+}
+```
 
-  int get count => _count;
-  set count(int newCount) {
-    _count = newCount;
-    notifyListeners();
+#### Service Initialization:
+
+```dart
+final getIt = GetIt.instance;
+
+class Services {
+  static void init() {
+    getIt.registerSingleton<StorageService>(StorageService());
+    // ... other services ...
+  }
+
+  static T get<T extends Object>() {
+    return getIt.get<T>();
   }
 }
 ```
 
-Usage with ChangeBuilder
+#### Service Notifier:
 
 ```dart
-// any-view.dart
-ChangeBuilder<CounterStateManager>(
-  watch: CounterStateManager(), //Listen for notifyListener() of stateManager
-  builder: (context, state) => Text("${state.count}"),
-)
+mixin class ServiceNotifier {
+  final List<VoidCallback> _callbacks = [];
+  void addListener(VoidCallback callback) {
+    if (_callbacks.contains(callback)) {
+      return;
+    }
+    _callbacks.add(callback);
+  }
+
+  void removeListener(VoidCallback callback) {
+    _callbacks.remove(callback);
+  }
+
+  void notifyListeners() {
+    for (final c in _callbacks) {
+      try {
+        c();
+      } catch (e) {
+        AppLogger.d(e.toString());
+      }
+    }
+  }
+}
 ```
 
 ### Delegator 🐊
 
 Inspired by Swift for iOS, it will help you to dispatch functions that will run on the View from your ViewModel.
 
-**View**
+Please refer to the [docs](https://github.com/appfactorysrl/jelly-2vm/blob/main/docs/delegate.md) for more details.
 
-```dart
-// Create View specific delegate
-abstract class Delegate1 {
-  onApiError(Object? e);
-}
 
-// Create union of multiple delegates, since dart doesn't allow implicit union when using dynamics
-abstract class CounterViewDelegates implements Delegate1, Delegate2 {}
+## Best Practices
 
-// Implement the delegate(s)
-class CounterView extends ViewModel<CounterViewModel> implements CounterViewDelegates{
-  ...
-  @override
-  TeamBuilderViewModel createViewModel() {
-    // Pass delegate (the View itself) to ViewModel
-    return TeamBuilderViewModel(delegate: this);
-  }
+- A `View + ViewModel` can represent an entire page or a portion of it.
+- Views can use `StatelessWidget` for layout sections.
+- Services are singletons managed with `GetIt`.
+- Use `ServiceNotifier` to make services reactive.
 
-  // Implement all the methods from the delegates
-  @override
-  onApiError(Object? e){
-    // Handle Api Error
-  }
-  ...
-}
-```
 
-**ViewModel**
 
-```dart
-// Use the ViewModelDelegator giving the (union of) delegates from the View
-class CounterViewModel extends ViewModel with ViewModelDelegator<CounterViewDelegates>{
-  // Add delegate when instantiated
-  CounterViewModel({required CounterViewDelegates delegate}){
-    addDelegate(delegate);
-  }
-  ...
-  try{
-    ...
-  } catch(e){
-    // Call the delegate(s) with the specific action
-    delegateAction((delegate) => delegate.onApiError(e));
-  }
-  ...
-}
-```
+## Quantums ⚛️
 
-## Quantum ⚛️
-
-Quantum is a value that can change over time and notify its listeners when it changes.
+Quantums is the evolution of the Model-View-ViewModel pattern, in order to have a finer-grained reactivity and control over the state of the UI.
+Using quantums you can have a state of a specific part of the UI that can be observed and updated independently from the rest of the UI.
 
 ### Why
 
@@ -256,4 +232,17 @@ class CounterViewModel extends ViewModel {
 }
 ```
 
-For more examples, see the [docs](https://github.com/jelly-dart/jelly_2vm/blob/main/docs/en/quantums.md).
+For more examples, see the [docs](https://github.com/appfactorysrl/jelly-2vm/blob/main/docs/quantums.md).
+
+
+
+
+## Contributing
+jelly-2vm is open-source! Feel free to contribute with pull requests, report bugs, or suggest new features.
+
+## License
+jelly-2vm is released under the MIT License. See the [LICENSE](https://github.com/appfactorysrl/jelly-2vm/blob/main/LICENSE) file for details.
+
+## Contact
+For questions or support, please open an issue on GitHub.
+

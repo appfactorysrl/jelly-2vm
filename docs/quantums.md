@@ -1,16 +1,17 @@
-# I Quantum
+# Quantums
 
-### Cos'è un Quantum
+### What is a Quantum
 
-Un Quantum è un oggetto che rappresenta un valore che può cambiare nel tempo e notifica i suoi listener quando viene modificato.
+A Quantum is an object that represents a value that can change over time and notifies its listeners when it is modified.
 
-### Perché
+### Why
 
-A volte avere uno stato di tutta la pagina può portare a problemi di performance, per questo motivo si può utilizzare un Quantum per rappresentare lo stato di una determinata porzione della pagina. Usando poi il QuantumBuilder si può rendere la porzione reattiva.
+Sometimes having a state for the entire page can lead to performance issues. For this reason, you can use a Quantum to represent the state of a specific portion of the page. Then using the QuantumBuilder you can make that portion reactive.
 
-### Come
+### How
 
-Prendiamo come esempio un semplice contatore:
+Let's take a simple counter as an example:
+
 
 ```dart
 // counter_view.dart
@@ -59,13 +60,13 @@ class CounterViewModel extends ViewModel {
 }
 ```
 
-In questo modo possiamo limitare la reattività al solo testo da ri-renderizzare.
+In this way we can limit the reactivity to the only text to be re-rendered.
 
-(Per un esempio più completo, si può vedere l'esempio in [HomeView](https://github.com/jelly-dart/jelly_2vm/blob/main/example/home/home_view.dart))
+(For a more complete example, see the example in [HomeView](https://github.com/appfactorysrl/jelly-2vm/blob/main/example/home/home_view.dart))
 
-### Persistenza degli atomi
+### Persistence of atoms
 
-Il valore di un atom può essere persistito utilizzando `persistentStorageInterface`
+The value of an atom can be persisted using `persistentStorageInterface`
 
 ```dart
 final persistedCounter = Atom.persisted(
@@ -77,11 +78,12 @@ final persistedCounter = Atom.persisted(
   ),
 );
 ```
-In questo modo il valore di `persistedCounter` sarà salvato e potrà essere recuperato anche dopo il riavvio dell'app.
 
-### Molecole
+In this way the value of `persistedCounter` will be saved and can be retrieved even after the app is restarted.
 
-Le molecole sono funzioni che prendono uno (o più) quantum come input e restituiscono un altro quantum come output.
+### Molecules
+
+Molecules are functions that take one (or more) quantum as input and return another quantum as output.
 
 ```dart
 final showWarning = MoleculeFrom1<int, bool>(
@@ -90,4 +92,4 @@ final showWarning = MoleculeFrom1<int, bool>(
 );
 ```
 
-Possono essere utilizzate per processare i dati di un quantum resistuendo ad esempio una stringa da mostrare.
+Molecules can be used to process the data of a quantum and return for example a string to be displayed.
