@@ -160,7 +160,7 @@ mixin class ServiceNotifier {
 
 Inspired by Swift for iOS, it will help you to dispatch functions that will run on the View from your ViewModel.
 
-Please refer to the [docs](https://github.com/appfactorysrl/jelly-2vm/blob/main/docs/delegate.md) for more details.
+Please refer to the [docs](https://github.com/appfactorysrl/jelly-2vm/blob/main/doc/delegate.md) for more details.
 
 
 ## Best Practices
@@ -232,7 +232,7 @@ class CounterViewModel extends ViewModel {
 }
 ```
 
-For more examples, see the [docs](https://github.com/appfactorysrl/jelly-2vm/blob/main/docs/quantums.md).
+For more examples, see the [docs](https://github.com/appfactorysrl/jelly-2vm/blob/main/doc/quantums.md).
 
 
 
